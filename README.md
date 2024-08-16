@@ -1,6 +1,6 @@
 # HTTPXUI
 
-HTTPXUI is an HTTP flyover tool based on the [httpx](https://github.com/projectdiscovery/httpx) library by ProjectDiscovery. It intends to optimize flyovers by performing (nearly all) HTTP probes and screenshotting while persisting the results to a local database for future reference and comparison of your reconaissance activity.
+HTTPXUI is an HTTP flyover tool based on the [httpx](https://github.com/projectdiscovery/httpx) library by ProjectDiscovery. It intends to optimize flyovers by performing (nearly all) HTTP probes and screenshotting while persisting the results for tracking, searching, and future reference of your reconaissance activity.
 
 ## Features
 

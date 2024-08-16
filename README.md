@@ -49,7 +49,7 @@ HTTPXUI is an HTTP flyover tool based on the [httpx](https://github.com/projectd
 | OS | Path(s) |
 | --- | --- |
 | Linux | `$XDG_CONFIG_HOME/httpxui/pb_data or $HOME/.config/httpxui/pb_data` |
-| MacOS | `$HOME/Library/Application Support/httpxui/pb_data/` |
+| macOS | `$HOME/Library/Application Support/httpxui/pb_data/` |
 | Windows | `%APPDATA%\httpxui\pb_data\` or `C:\Users\%USER%\AppData\Roaming\httpxui\pb_data\` |
 
 > [!NOTE]  

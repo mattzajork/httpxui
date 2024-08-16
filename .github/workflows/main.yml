@@ -1,0 +1,145 @@
+name: build and release
+on:
+  push:
+    tags:
+      - '*'
+env:
+  NODE_OPTIONS: "--max-old-space-size=4096"
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest, ubuntu-20.04]
+    runs-on: ${{ matrix.os }}
+    permissions: write-all
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: setup go 
+        uses: actions/setup-go@v5
+        with:
+          check-latest: true
+          go-version: 1.22.3
+      - name: setup nodejs
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.3.0
+      - name: install wails
+        run: go install github.com/wailsapp/wails/v2/cmd/wails@v2.8.2
+        shell: bash
+      - name: install ubuntu focal wails dependencies
+        run: sudo apt-get update && sudo apt-get install libgtk-3-0 libwebkit2gtk-4.0-dev gcc-aarch64-linux-gnu
+        shell: bash
+        if: matrix.os == 'ubuntu-20.04'
+      - name: build ubuntu-20.04 app
+        run: wails build --platform linux/amd64 -upx
+        shell: bash
+        if: matrix.os == 'ubuntu-20.04'
+      - name: set ubuntu-20.04 perms
+        working-directory: .
+        run: chmod +x build/bin/*
+        shell: bash
+        if: matrix.os == 'ubuntu-20.04'
+      - name: package ubuntu-20.04 app
+        run: tar -czvf httpxui-ubuntu-20.04-amd64.tar.gz httpxui
+        working-directory: build/bin
+        shell: bash
+        if: matrix.os == 'ubuntu-20.04'
+      - name: upload ubuntu-20.04 artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: httpxui-ubuntu-20.04-amd64
+          path: build/bin/httpxui-ubuntu-20.04-amd64.tar.gz
+        if: matrix.os == 'ubuntu-20.04'
+      - name: install ubuntu-latest wails dependencies
+        run: sudo apt-get update && sudo apt-get install libgtk-3-0 libwebkit2gtk-4.0-dev gcc-aarch64-linux-gnu
+        shell: bash
+        if: matrix.os == 'ubuntu-latest'
+      - name: build ubuntu-latest app
+        run: wails build --platform linux/amd64 -upx
+        shell: bash
+        if: matrix.os == 'ubuntu-latest'
+      - name: set ubuntu-latest perms
+        working-directory: .
+        run: chmod +x build/bin/*
+        shell: bash
+        if: matrix.os == 'ubuntu-latest'
+      - name: package ubuntu-latest app
+        run: tar -czvf httpxui-ubuntu-latest-amd64.tar.gz httpxui
+        working-directory: build/bin
+        shell: bash
+        if: matrix.os == 'ubuntu-latest'
+      - name: upload ubuntu-latest artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: httpxui-ubuntu-latest-amd64
+          path: build/bin/httpxui-ubuntu-latest-amd64.tar.gz
+        if: matrix.os == 'ubuntu-latest'
+      - name: build macos app
+        run: wails build --platform darwin/arm64
+        shell: bash
+        if: matrix.os == 'macos-latest'
+      - name: macos adhoc codesign
+        run: codesign -s - -f build/bin/httpxui.app/Contents/MacOS/httpxui
+        shell: bash
+        if: matrix.os == 'macos-latest'
+      - name: package macos app as zip
+        working-directory: build/bin
+        run: zip -r httpxui-macos-arm64.zip httpxui.app/*
+        shell: bash
+        if: matrix.os == 'macos-latest'
+      - name: upload macos artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: httpxui-macos-arm64
+          path: build/bin/httpxui-macos-arm64.zip
+        if: matrix.os == 'macos-latest'
+      - name: build windows app
+        run: wails build --platform windows/amd64
+        shell: bash
+        if: matrix.os == 'windows-latest'
+      - name: package windows app
+        run: Compress-Archive -LiteralPath httpxui.exe -DestinationPath httpxui-windows-amd64.zip
+        working-directory: build/bin
+        if: matrix.os == 'windows-latest'
+      - name: upload windows artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: httpxui-windows-amd64
+          path: build/bin/httpxui-windows-amd64.zip
+        if: matrix.os == 'windows-latest'
+  release:
+    permissions: write-all
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: download ubuntu-20.04 package
+        uses: actions/download-artifact@v4
+        with:
+          name: httpxui-ubuntu-20.04-amd64
+      - name: download ubuntu-latest package
+        uses: actions/download-artifact@v4
+        with:
+          name: httpxui-ubuntu-latest-amd64
+      - name: download macos package
+        uses: actions/download-artifact@v4
+        with:
+          name: httpxui-macos-arm64
+      - name: download windows package
+        uses: actions/download-artifact@v4
+        with:
+          name: httpxui-windows-amd64
+      - name: create hashes
+        run: shasum -a 256 httpxui-* >> CHECKSUMS.txt
+        shell: bash
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            httpxui-ubuntu-latest-amd64.tar.gz
+            httpxui-ubuntu-20.04-amd64.tar.gz
+            httpxui-macos-arm64.zip
+            httpxui-windows-amd64.zip
+            CHECKSUMS.txt

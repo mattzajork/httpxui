@@ -1,0 +1,35 @@
+{
+    "[svelte]": {
+      "editor.defaultFormatter": "svelte.svelte-vscode"
+    },
+    "html.format.wrapAttributes": "auto",
+    "editor.wordWrapColumn": 600,
+    "editor.lineNumbers": "relative",
+    "html.format.wrapLineLength": 0,
+    "vim.textwidth": 600,
+    "files.exclude": {
+      // "**/.gitignore": true,
+      // "build": true,
+      // "go.mod": true,
+      // "go.sum": true,
+      // "wails.json": true,
+      // "frontend/.npmrc": true,
+      // "frontend/static": true,
+      // "frontend/.svelte-kit": true,
+      // "frontend/build": true,
+      // "frontend/.prettierrc": true,
+      // "frontend/.prettierignore": true,
+      // "frontend/dist": true,
+      // "frontend/jsconfig.json": true,
+      // "frontend/src/tailwind.css": true,
+      // "frontend/node_modules": true,
+      // "frontend/package-lock*": true,
+      // "frontend/*.config.*": true,
+      // "frontend/package.json.md5": true,
+      // "frontend/src/vite-env.d.ts": true,
+      // "frontend/wailsjs": true,
+      // "output": true,
+      // "pb_data": true
+    }
+  }
+  

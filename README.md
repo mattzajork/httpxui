@@ -97,7 +97,7 @@ httpxui@localhost.localdomain:kuideiL7zo
 
 ## Note About Windows and MacOS Binaries
 
-The builds in this repository are not signed with production or developer certificates, so Windows and MacOS may flag them as malicious, which requires an additional steps to be able to execute them. Alternatively, you may build from source code to avoid this problem altogether.
+The builds in this repository are not signed with production or developer certificates, so Windows and MacOS may flag them as malicious, which requires additional steps to be able to execute them. Alternatively, you may build from source code to avoid this problem altogether.
 
 ### MacOS Binary
 

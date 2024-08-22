@@ -39,7 +39,7 @@
 
 <img
     bind:this={imgElement}
-    class="{!fullView ? 'object-cover object-top aspect-video' : ''} border border-pdgrayoutline" 
+    class="{!fullView ? 'w-full h-[146px] object-cover object-top aspect-video' : ''} border border-pdgrayoutline" 
     data-src={src}
     src={src}
     on:error={() => imgElement.src = bgimage}

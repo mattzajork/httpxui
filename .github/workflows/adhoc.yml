@@ -38,7 +38,7 @@ jobs:
             shell: bash
             if: matrix.os == 'ubuntu-20.04'
           - name: build ubuntu-20.04 app
-            run: wails build --platform linux/amd64 -upx
+            run: wails build -debug --platform linux/amd64 -upx
             shell: bash
             if: matrix.os == 'ubuntu-20.04'
           - name: set ubuntu-20.04 perms
@@ -62,7 +62,7 @@ jobs:
             shell: bash
             if: matrix.os == 'ubuntu-latest'
           - name: build ubuntu-latest app
-            run: wails build --platform linux/amd64 -upx
+            run: wails build -debug --platform linux/amd64 -upx
             shell: bash
             if: matrix.os == 'ubuntu-latest'
           - name: set ubuntu-latest perms
@@ -82,7 +82,7 @@ jobs:
               path: build/bin/httpxui-ubuntu-latest-amd64.tar.gz
             if: matrix.os == 'ubuntu-latest'
           - name: build macos app
-            run: wails build --platform darwin/arm64
+            run: wails build -debug --platform darwin/arm64
             shell: bash
             if: matrix.os == 'macos-latest'
           - name: macos adhoc codesign
@@ -101,7 +101,7 @@ jobs:
               path: build/bin/httpxui-macos-arm64.zip
             if: matrix.os == 'macos-latest'
           - name: build windows app
-            run: wails build --platform windows/amd64
+            run: wails build -debug --platform windows/amd64
             shell: bash
             if: matrix.os == 'windows-latest'
           - name: package windows app

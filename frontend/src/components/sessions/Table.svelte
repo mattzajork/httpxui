@@ -1,16 +1,15 @@
 <script>
-    import { selectedHost } from '@/stores/app';
+    import SortHeader from '@/components/sessions/SortHeader.svelte';
     import StatusCodeBadge from '@/components/base/StatusCodeBadge.svelte';
     import { goto } from '$app/navigation';
-    import SortHeader from '@/components/sessions/SortHeader.svelte';
-    import { sortProp, sortDir, currentPage, perPage, urlColumnEnabled, statusColumnEnabled, titleColumnEnabled, methodColumnEnabled, responseCodeColumnEnabled, webserverColumnEnabled, responseTimeColumnEnabled, contentTypeColumnEnabled, contentLengthColumnEnabled, wordsColumnEnabled, linesColumnEnabled, techColumnEnabled } from '@/stores/sessions';
+    import { httpxdata } from '@/stores/httpxdata.js';
     import { onDestroy, onMount } from 'svelte';
     import { orderBy } from 'lodash-es';
+    import { selectedHost } from '@/stores/app';
+    import { sortProp, sortDir, currentPage, perPage, urlColumnEnabled, statusColumnEnabled, titleColumnEnabled, methodColumnEnabled, responseCodeColumnEnabled, webserverColumnEnabled, responseTimeColumnEnabled, contentTypeColumnEnabled, contentLengthColumnEnabled, wordsColumnEnabled, linesColumnEnabled, techColumnEnabled } from '@/stores/sessions';
 
-    export let items;
-
-    $: filter = '';
-    $: items_s = sortFilter(filter, $sortProp, $sortDir);
+    $: filter_s = '';
+    $: items_s = sortFilter(filter_s, $sortProp, $sortDir);
     $: totalPages = Math.ceil(items_s.length / $perPage);
     $: totalItems = items_s.length;
     $: startIndexForPage = ($currentPage - 1) * $perPage;
@@ -22,14 +21,19 @@
         perPage.set(parseInt(e.target.value));
     }
 
-    function applyFilter(term) {
-        filter = term;
+    let timer = null;
+
+    function handleKeyUp(e) {
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+            filter_s = e.target.value;
+        }, 750);
     }
 
-    function searchObjects(data) {
+    function searchObjects(filter) {
         currentPage.set(1);
         const searchableProps = ['url', 'status', 'title', 'method', 'status_code', 'time', 'webserver', 'content_type', 'content_length', 'words', 'lines', 'tech'];
-        return data.filter(obj => {
+        return $httpxdata.filter(obj => {
             for (const prop of searchableProps) {
                 if (obj[prop] && !Array.isArray(obj[prop]) && obj[prop].toString().toLowerCase().includes(filter.toLowerCase())) {
                     return true;
@@ -47,24 +51,18 @@
 
     function sortFilter(filter, sortProp, sortDir) {
         let temp = [];
-        let searchedFlag = false;
 
         if (filter) {
-            temp = searchObjects(items);
-            searchedFlag = true;
-        } 
+            temp = searchObjects(filter);
+        }  else {
+            temp = $httpxdata;
+        }
 
         if (sortProp && sortDir) {
-            if (searchedFlag) {
-                return orderBy(temp, [sortProp], [sortDir]);
-            }
-            return orderBy(items, [sortProp], [sortDir]);
+            return orderBy(temp, [sortProp], [sortDir]);
         } 
 
-        if (searchedFlag) {
-            return temp;
-        }
-        return items;
+        return temp;
     }
 
     function incrementPage() {
@@ -186,14 +184,10 @@
               </div>
             </div>
         </div>
-
-
-
-
         <div>
             <label class="input input-bordered flex items-center gap-2">
                 <input 
-                    on:keyup={(e) => applyFilter(e.target.value)}
+                    on:keyup={handleKeyUp}
                     type="text" class="grow" style="border: none; box-shadow: none;" placeholder="Search" />
             </label>
         </div>

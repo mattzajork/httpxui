@@ -55,6 +55,6 @@
         <SessionStatus />
       </div>
     </div>
-    <div class="flex-auto select-none cursor-default text-right p-2 min-w-max text-pdcontentmuted">By 0xm1, v1.0</div>
+    <div class="flex-auto select-none cursor-default text-right p-2 min-w-max text-pdcontentmuted">By 0xm1, v1.2</div>
   </div>
 </footer>

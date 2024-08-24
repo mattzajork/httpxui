@@ -2,8 +2,8 @@
     import Grid from '@/components/sessions/Grid.svelte';
     import Table from '@/components/sessions/Table.svelte';
     import { selectedTab } from '@/stores/sessions';
-
-    export let items;
+ 
+    export let restoreScrollCallback;
 </script>
 
 <div role="tablist" class="tabs tabs-bordered">
@@ -20,7 +20,7 @@
 </div>
 
 {#if $selectedTab === 'grid'}
-    <Grid items={items} />
+    <Grid restoreScrollCallback={restoreScrollCallback} />
 {:else}
-    <Table items={items} />
+    <Table />
 {/if}

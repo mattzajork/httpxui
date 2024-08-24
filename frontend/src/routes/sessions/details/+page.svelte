@@ -2,7 +2,7 @@
     import CommonHelper from '$lib/CommonHelper.js';
     import TabbedSessionDetails from '@/components/sessions/TabbedSessionDetails.svelte';
     import { httpxdata, httpxdataLoading } from '@/stores/httpxdata';
-    import { onMount, onDestroy, afterUpdate, tick } from 'svelte';
+    import { onMount, onDestroy } from 'svelte';
     import { selectedSession } from '@/stores/app';
 
     $: totalEndpoints = $httpxdata !== null && $httpxdata !== undefined ? $httpxdata.length : 0;
@@ -26,11 +26,13 @@
       window.addEventListener('scroll', handleScroll);
     });
 
-    afterUpdate(async () => {
-        const storedScrollPosition = sessionStorage.getItem('scrollPosition');
-        await tick();
-        window.scrollTo(0, parseInt(storedScrollPosition));
-    });
+    let restoreScroll = function() {
+      const storedScrollPosition = sessionStorage.getItem('scrollPosition');
+
+      setTimeout(() => {
+        window.scrollTo(0, parseInt(storedScrollPosition ? storedScrollPosition : 0));
+      }, 200);
+    }
 
     onDestroy(() => {
       window.removeEventListener('scroll', handleScroll);
@@ -75,7 +77,7 @@
         </div>
       {:else}
         {#if totalEndpoints > 0}
-        <TabbedSessionDetails items={$httpxdata} />
+        <TabbedSessionDetails restoreScrollCallback={restoreScroll} />
         {:else}
         <p>No live endpoints found.</p>
         {/if}

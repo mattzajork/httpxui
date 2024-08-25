@@ -27,7 +27,7 @@ jobs:
         with:
           node-version: 22.3.0
       - name: install wails
-        run: go install github.com/wailsapp/wails/v2/cmd/wails@v2.8.2
+        run: go install github.com/wailsapp/wails/v2/cmd/wails@v2.9.1
         shell: bash
       - name: install ubuntu focal wails dependencies
         run: sudo apt-get update && sudo apt-get install libgtk-3-0 libwebkit2gtk-4.0-dev gcc-aarch64-linux-gnu
